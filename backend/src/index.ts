@@ -6,6 +6,7 @@ import { db } from './db';
 import authRoutes from './routes/auth';
 import taskRoutes from './routes/tasks';
 import conversationRoutes from './routes/conversations';
+import { setupWebSocket } from './websocket';
 
 // Load environment variables
 config();
@@ -68,12 +69,16 @@ async function start() {
     await registerPlugins();
     await registerRoutes();
 
+    // Setup WebSocket server
+    const io = setupWebSocket(app);
+
     await app.listen({ port: PORT, host: HOST });
     
     console.log(`
 🚀 TaskWeave Backend Server Started
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📡 Server: http://${HOST}:${PORT}
+📡 HTTP Server: http://${HOST}:${PORT}
+🔌 WebSocket: ws://${HOST}:${PORT}
 🏥 Health: http://${HOST}:${PORT}/health
 🔐 Auth API: http://${HOST}:${PORT}/api/auth
 📋 Tasks API: http://${HOST}:${PORT}/api/tasks

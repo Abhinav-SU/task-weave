@@ -1,0 +1,32 @@
+{
+  "name": "taskweave-extension",
+  "version": "1.0.0",
+  "description": "TaskWeave Browser Extension - Universal AI Task Continuity",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch",
+    "clean": "node -e \"require('fs').rmSync('dist', {recursive:true, force:true}); console.log('✅ Cleaned dist directory')\"",
+    "dev": "npm run clean && npm run watch"
+  },
+  "keywords": [
+    "browser-extension",
+    "ai",
+    "task-management",
+    "chatgpt",
+    "claude"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "socket.io-client": "^4.6.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.256",
+    "@types/webextension-polyfill": "^0.10.7",
+    "esbuild": "^0.19.9",
+    "typescript": "^5.3.3"
+  }
+}
+
