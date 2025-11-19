@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Plus, Download, FileText, CheckCircle, Clock, Archive, Zap, Target } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
@@ -13,8 +13,15 @@ import { useNavigate } from "react-router-dom";
 
 export default function DashboardHome() {
   const tasks = useTaskStore((state) => state.tasks);
+  const fetchTasks = useTaskStore((state) => state.fetchTasks);
+  const isLoading = useTaskStore((state) => state.isLoading);
   const navigate = useNavigate();
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  
+  // Fetch tasks on mount
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
   
   const activeTasks = tasks.filter((t) => t.status === 'in-progress');
   const completedTasks = tasks.filter((t) => t.status === 'completed');
@@ -43,7 +50,14 @@ export default function DashboardHome() {
           </div>
           
           <div className="flex gap-3">
-            <Button variant="outline" className="gap-2">
+            <Button 
+              variant="outline" 
+              className="gap-2"
+              onClick={() => {
+                // TODO: Implement import functionality
+                alert('Import feature coming soon!');
+              }}
+            >
               <Download className="w-4 h-4" />
               Import
             </Button>

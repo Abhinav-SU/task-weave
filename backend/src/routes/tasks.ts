@@ -8,6 +8,8 @@ import { eq, and, desc, sql } from 'drizzle-orm';
 const createTaskSchema = z.object({
   title: z.string().min(1).max(500),
   description: z.string().optional(),
+  status: z.enum(['pending', 'active', 'in-progress', 'completed', 'archived']).optional().default('active'),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
   platform: z.string().optional(),
   tags: z.array(z.string()).optional(),
   metadata: z.record(z.any()).optional(),
@@ -16,7 +18,8 @@ const createTaskSchema = z.object({
 const updateTaskSchema = z.object({
   title: z.string().min(1).max(500).optional(),
   description: z.string().optional(),
-  status: z.enum(['active', 'completed', 'archived']).optional(),
+  status: z.enum(['pending', 'active', 'in-progress', 'completed', 'archived']).optional(),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
   platform: z.string().optional(),
   tags: z.array(z.string()).optional(),
   metadata: z.record(z.any()).optional(),
@@ -31,20 +34,29 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
       const { userId } = request.user as { userId: string };
       const body = createTaskSchema.parse(request.body);
 
+      // Map frontend status to backend status
+      let status = body.status || 'active';
+      if (status === 'in-progress') status = 'active';
+
       const [newTask] = await db
         .insert(tasks)
         .values({
           user_id: userId,
-          ...body,
+          title: body.title,
+          description: body.description,
+          status,
+          platform: body.platform,
+          tags: body.tags,
         })
         .returning();
 
+      fastify.log.info(`✅ Task created: ${newTask.id} - ${newTask.title}`);
       return reply.code(201).send(newTask);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ error: error.errors });
       }
-      fastify.log.error(error);
+      fastify.log.error('❌ Create task error:', error);
       return reply.code(500).send({ error: 'Internal server error' });
     }
   });
@@ -149,21 +161,25 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.code(404).send({ error: 'Task not found' });
       }
 
+      // Map frontend status to backend status
+      const updateData: any = { ...body, updated_at: new Date() };
+      if (updateData.status === 'in-progress') {
+        updateData.status = 'active';
+      }
+
       const [updatedTask] = await db
         .update(tasks)
-        .set({
-          ...body,
-          updated_at: new Date(),
-        })
+        .set(updateData)
         .where(eq(tasks.id, id))
         .returning();
 
+      fastify.log.info(`✅ Task updated: ${updatedTask.id} - status: ${updatedTask.status}`);
       return reply.send(updatedTask);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ error: error.errors });
       }
-      fastify.log.error(error);
+      fastify.log.error('❌ Update task error:', error);
       return reply.code(500).send({ error: 'Internal server error' });
     }
   });
@@ -182,14 +198,16 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
       });
 
       if (!existingTask) {
+        fastify.log.warn(`❌ Delete failed: Task ${id} not found or doesn't belong to user`);
         return reply.code(404).send({ error: 'Task not found' });
       }
 
       await db.delete(tasks).where(eq(tasks.id, id));
 
+      fastify.log.info(`✅ Task deleted: ${id} - ${existingTask.title}`);
       return reply.code(204).send();
     } catch (error) {
-      fastify.log.error(error);
+      fastify.log.error('❌ Delete task error:', error);
       return reply.code(500).send({ error: 'Internal server error' });
     }
   });

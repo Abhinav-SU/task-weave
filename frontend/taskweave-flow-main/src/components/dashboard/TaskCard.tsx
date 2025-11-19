@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { MoreVertical, Clock, Tag } from "lucide-react";
-import { Task, AIPlatform } from "@/store/taskStore";
+import { Task, AIPlatform, useTaskStore } from "@/store/taskStore";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface TaskCardProps {
   task: Task;
@@ -35,6 +36,7 @@ const priorityColors = {
 
 export const TaskCard = ({ task }: TaskCardProps) => {
   const navigate = useNavigate();
+  const { deleteTask, updateTask } = useTaskStore();
 
   return (
     <motion.div
@@ -82,10 +84,51 @@ export const TaskCard = ({ task }: TaskCardProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Continue</DropdownMenuItem>
-              <DropdownMenuItem>Create Branch</DropdownMenuItem>
-              <DropdownMenuItem>Archive</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/dashboard/tasks/${task.id}`);
+                }}
+              >
+                Continue
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toast.info('Branch feature coming soon!');
+                }}
+              >
+                Create Branch
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  try {
+                    await updateTask(task.id, { status: 'archived' });
+                    toast.success('Task archived');
+                  } catch (error) {
+                    toast.error('Failed to archive task');
+                  }
+                }}
+              >
+                Archive
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className="text-destructive"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (confirm(`Delete "${task.title}"?`)) {
+                    try {
+                      await deleteTask(task.id);
+                      toast.success('Task deleted');
+                    } catch (error) {
+                      toast.error('Failed to delete task');
+                    }
+                  }
+                }}
+              >
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

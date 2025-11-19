@@ -1,5 +1,6 @@
+import React from "react";
 import { motion } from "framer-motion";
-import { Code, FileText, Search as SearchIcon, Lightbulb, Play, Plus } from "lucide-react";
+import { Code, FileText, Search as SearchIcon, Lightbulb, Play, Plus, Loader2 } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -46,7 +47,12 @@ const categories = ['All', 'Development', 'Research', 'Writing', 'General'];
 
 export default function Templates() {
   const navigate = useNavigate();
-  const { templates } = useTemplateStore();
+  const { templates, fetchTemplates, isLoading } = useTemplateStore();
+
+  // Fetch templates on mount
+  React.useEffect(() => {
+    fetchTemplates();
+  }, [fetchTemplates]);
 
   return (
     <DashboardLayout>
@@ -81,8 +87,13 @@ export default function Templates() {
 
         <div>
           <h2 className="text-xl font-bold mb-4">Your Templates</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.map((template, index) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {templates.map((template, index) => (
               <motion.div
                 key={template.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -127,8 +138,9 @@ export default function Templates() {
                   </div>
                 </Card>
               </motion.div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div>

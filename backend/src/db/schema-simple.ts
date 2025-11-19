@@ -19,7 +19,7 @@ export const tasks = pgTable('tasks', {
   user_id: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
   title: text('title').notNull(),
   description: text('description'),
-  status: text('status').notNull().default('pending'),
+  status: text('status').notNull().default('active'), // Changed from 'pending' to 'active'
   platform: text('platform'),
   tags: jsonb('tags').$type<string[]>(),
   embedding: text('embedding'),

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Node, Edge } from '@xyflow/react';
+import { api } from '@/lib/api';
 
 export type NodeType = 'ai-platform' | 'condition' | 'transform' | 'merge';
 
@@ -27,12 +28,15 @@ export interface WorkflowTemplate extends TemplateMetadata {
 interface TemplateStore {
   templates: WorkflowTemplate[];
   currentTemplate: WorkflowTemplate | null;
+  isLoading: boolean;
+  error: string | null;
+  fetchTemplates: () => Promise<void>;
   setCurrentTemplate: (template: WorkflowTemplate | null) => void;
   updateCurrentTemplate: (updates: Partial<WorkflowTemplate>) => void;
-  saveTemplate: (template: WorkflowTemplate) => void;
-  deleteTemplate: (id: string) => void;
+  saveTemplate: (template: WorkflowTemplate) => Promise<void>;
+  deleteTemplate: (id: string) => Promise<void>;
   getTemplateById: (id: string) => WorkflowTemplate | undefined;
-  duplicateTemplate: (id: string) => void;
+  duplicateTemplate: (id: string) => Promise<void>;
 }
 
 const exampleTemplates: WorkflowTemplate[] = [
@@ -197,7 +201,29 @@ export const useTemplateStore = create<TemplateStore>()(
     (set, get) => ({
       templates: exampleTemplates,
       currentTemplate: null,
+      isLoading: false,
+      error: null,
+
+      fetchTemplates: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await api.getTemplates();
+          const backendTemplates = response.templates || [];
+          
+          // Merge with example templates (keep examples if no backend templates)
+          const allTemplates = backendTemplates.length > 0 ? backendTemplates : exampleTemplates;
+          
+          set({ templates: allTemplates, isLoading: false });
+        } catch (error) {
+          console.error('Failed to fetch templates:', error);
+          set({ error: 'Failed to load templates', isLoading: false });
+          // Keep example templates on error
+          set({ templates: exampleTemplates });
+        }
+      },
+
       setCurrentTemplate: (template) => set({ currentTemplate: template }),
+      
       updateCurrentTemplate: (updates) => {
         set((state) => ({
           currentTemplate: state.currentTemplate
@@ -205,36 +231,66 @@ export const useTemplateStore = create<TemplateStore>()(
             : null,
         }));
       },
-      saveTemplate: (template) => {
-        set((state) => {
-          const existingIndex = state.templates.findIndex((t) => t.id === template.id);
-          if (existingIndex >= 0) {
-            const newTemplates = [...state.templates];
-            newTemplates[existingIndex] = { ...template, updatedAt: new Date() };
-            return { templates: newTemplates };
+      
+      saveTemplate: async (template) => {
+        set({ isLoading: true, error: null });
+        try {
+          const isNew = !get().templates.find((t) => t.id === template.id);
+          
+          if (isNew) {
+            // Create new template
+            const created = await api.createTemplate(template);
+            set((state) => ({
+              templates: [...state.templates, created],
+              isLoading: false,
+            }));
+          } else {
+            // Update existing template
+            const updated = await api.updateTemplate(template.id, template);
+            set((state) => ({
+              templates: state.templates.map((t) => 
+                t.id === template.id ? updated : t
+              ),
+              isLoading: false,
+            }));
           }
-          return { templates: [...state.templates, template] };
-        });
+        } catch (error) {
+          console.error('Failed to save template:', error);
+          set({ error: 'Failed to save template', isLoading: false });
+          throw error;
+        }
       },
-      deleteTemplate: (id) => {
-        set((state) => ({
-          templates: state.templates.filter((t) => t.id !== id),
-        }));
+      
+      deleteTemplate: async (id) => {
+        set({ isLoading: true, error: null });
+        try {
+          await api.deleteTemplate(id);
+          set((state) => ({
+            templates: state.templates.filter((t) => t.id !== id),
+            isLoading: false,
+          }));
+        } catch (error) {
+          console.error('Failed to delete template:', error);
+          set({ error: 'Failed to delete template', isLoading: false });
+          throw error;
+        }
       },
+      
       getTemplateById: (id) => {
         return get().templates.find((t) => t.id === id);
       },
-      duplicateTemplate: (id) => {
+      
+      duplicateTemplate: async (id) => {
         const template = get().getTemplateById(id);
         if (template) {
-          const newTemplate: WorkflowTemplate = {
+          const newTemplate = {
             ...template,
-            id: `${template.id}-copy-${Date.now()}`,
+            id: undefined as any, // Let backend generate new ID
             name: `${template.name} (Copy)`,
             createdAt: new Date(),
             updatedAt: new Date(),
           };
-          get().saveTemplate(newTemplate);
+          await get().saveTemplate(newTemplate);
         }
       },
     }),

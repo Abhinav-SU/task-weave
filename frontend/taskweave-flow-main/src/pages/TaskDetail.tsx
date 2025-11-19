@@ -1,12 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Share2, Download, GitBranch, Play, Tag, Clock } from "lucide-react";
+import { ArrowLeft, Share2, Download, GitBranch, Play, Tag, Clock, Loader2 } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { useTaskStore, AIPlatform } from "@/store/taskStore";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 const platformIcons: Record<AIPlatform, string> = {
   chatgpt: "💬",
@@ -14,11 +17,53 @@ const platformIcons: Record<AIPlatform, string> = {
   gemini: "✨",
 };
 
+interface Conversation {
+  id: string;
+  platform: string;
+  title?: string;
+  created_at: string;
+  message_count: number;
+  messages?: Array<{
+    id: string;
+    sender: string;
+    content: string;
+    created_at: string;
+  }>;
+}
+
 export default function TaskDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const tasks = useTaskStore((state) => state.tasks);
+  const { tasks, fetchTask } = useTaskStore();
   const task = tasks.find((t) => t.id === id);
+  
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Fetch task with conversations
+  useEffect(() => {
+    if (!id) return;
+    
+    const loadTaskDetails = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch task details with conversations from backend
+        const taskDetails = await api.getTask(id);
+        console.log('✅ Task details loaded:', taskDetails);
+        
+        if (taskDetails.conversations) {
+          setConversations(taskDetails.conversations);
+        }
+      } catch (error) {
+        console.error('❌ Failed to load task details:', error);
+        toast.error('Failed to load task details');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadTaskDetails();
+  }, [id]);
 
   if (!task) {
     return (
@@ -84,35 +129,68 @@ export default function TaskDetail() {
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-bold mb-4">Conversation Timeline</h2>
+              <h2 className="text-xl font-bold mb-4">Conversations</h2>
               
-              {task.messages.length > 0 ? (
-                <div className="space-y-4">
-                  {task.messages.map((message) => (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`p-4 rounded-lg ${
-                        message.role === 'user'
-                          ? 'bg-secondary/20 ml-8'
-                          : 'bg-primary/10 mr-8'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xl">{platformIcons[message.platform]}</span>
-                        <span className="font-medium capitalize">{message.role}</span>
-                        <span className="text-xs text-muted-foreground ml-auto">
-                          {new Date(message.timestamp).toLocaleString()}
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                </div>
+              ) : conversations.length > 0 ? (
+                <div className="space-y-6">
+                  {conversations.map((conversation) => (
+                    <Card key={conversation.id} className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">{conversation.platform}</Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {conversation.message_count} messages
+                          </span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(conversation.created_at).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-sm">{message.content}</p>
-                    </motion.div>
+                      
+                      {conversation.title && (
+                        <h3 className="font-medium mb-2">{conversation.title}</h3>
+                      )}
+                      
+                      {conversation.messages && conversation.messages.length > 0 && (
+                        <div className="space-y-2 mt-3">
+                          {conversation.messages.slice(0, 3).map((message) => (
+                            <motion.div
+                              key={message.id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`p-3 rounded-lg text-sm ${
+                                message.sender === 'user'
+                                  ? 'bg-secondary/20 ml-4'
+                                  : 'bg-primary/10 mr-4'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="font-medium capitalize">{message.sender}</span>
+                                <span className="text-xs text-muted-foreground ml-auto">
+                                  {new Date(message.created_at).toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm">{message.content}</p>
+                            </motion.div>
+                          ))}
+                          {conversation.message_count > 3 && (
+                            <div className="text-center text-sm text-muted-foreground">
+                              + {conversation.message_count - 3} more messages
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </Card>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  No messages yet
+                  <p>No conversations yet</p>
+                  <p className="text-sm mt-2">Capture conversations from ChatGPT or Claude using the browser extension</p>
                 </div>
               )}
             </Card>

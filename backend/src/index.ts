@@ -6,6 +6,7 @@ import { db } from './db';
 import authRoutes from './routes/auth';
 import taskRoutes from './routes/tasks';
 import conversationRoutes from './routes/conversations';
+import templateRoutes from './routes/templates';
 import { setupWebSocket } from './websocket';
 
 // Load environment variables
@@ -61,6 +62,7 @@ async function registerRoutes() {
   await app.register(authRoutes, { prefix: '/api/auth' });
   await app.register(taskRoutes, { prefix: '/api/tasks' });
   await app.register(conversationRoutes, { prefix: '/api/conversations' });
+  await app.register(templateRoutes, { prefix: '/api/templates' });
 }
 
 // Start server

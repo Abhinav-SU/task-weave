@@ -20,33 +20,8 @@ interface Notification {
   createdAt: Date;
 }
 
-// Mock notifications - replace with actual API call
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'success',
-    title: 'Task Completed',
-    message: 'Your research task was completed successfully',
-    read: false,
-    createdAt: new Date(Date.now() - 3600000)
-  },
-  {
-    id: '2',
-    type: 'info',
-    title: 'New Branch Created',
-    message: 'Branch "feature-exploration" was created',
-    read: false,
-    createdAt: new Date(Date.now() - 7200000)
-  },
-  {
-    id: '3',
-    type: 'warning',
-    title: 'Context Size Large',
-    message: 'Task context exceeds 100KB, consider compression',
-    read: true,
-    createdAt: new Date(Date.now() - 86400000)
-  }
-];
+// TODO: Replace with real notifications from backend
+const mockNotifications: Notification[] = [];
 
 const NotificationIcon = ({ type }: { type: NotificationType }) => {
   switch (type) {

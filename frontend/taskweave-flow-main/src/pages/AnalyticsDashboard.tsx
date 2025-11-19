@@ -40,34 +40,63 @@ export default function AnalyticsDashboard() {
 
   const totalTasks = tasks.length;
   const activeTasks = tasks.filter(t => t.status === 'in-progress').length;
-  const avgContextSize = Math.round(tasks.reduce((acc, t) => acc + t.contextSize, 0) / tasks.length);
-  const mostUsedPlatform = platformData.reduce((max, p) => p.value > max.value ? p : max).name;
+  const completedTasks = tasks.filter(t => t.status === 'completed').length;
+  const avgContextSize = Math.round(tasks.reduce((acc, t) => acc + t.contextSize, 0) / (tasks.length || 1));
+  const mostUsedPlatform = platformData.length > 0 
+    ? platformData.reduce((max, p) => p.value > max.value ? p : max).name 
+    : 'None';
 
-  const insights = [
-    {
-      type: 'trend' as const,
-      title: 'Claude Preference for Code',
-      description: 'You use Claude 40% more frequently for development tasks compared to other platforms.',
-      action: 'View coding tasks →'
-    },
-    {
+  // Compute real insights from task data
+  const insights = [];
+  
+  // Platform usage insight
+  if (platformData.length > 0) {
+    const topPlatform = platformData.reduce((max, p) => p.value > max.value ? p : max);
+    if (topPlatform.value > 0) {
+      insights.push({
+        type: 'trend' as const,
+        title: `${topPlatform.name} is your Go-To`,
+        description: `You've used ${topPlatform.name} for ${topPlatform.value} tasks (${Math.round((topPlatform.value / totalTasks) * 100)}% of all tasks).`,
+        action: 'View tasks →'
+      });
+    }
+  }
+  
+  // Completion rate insight
+  if (totalTasks > 0) {
+    const completionRate = Math.round((completedTasks / totalTasks) * 100);
+    insights.push({
       type: 'tip' as const,
-      title: 'High Success Rate',
-      description: 'Your ChatGPT → Claude workflow has an 85% completion rate. Consider using it more often.',
-      action: 'Create template →'
-    },
-    {
+      title: completionRate > 50 ? 'Great Completion Rate!' : 'Room for Improvement',
+      description: `You've completed ${completedTasks} out of ${totalTasks} tasks (${completionRate}% completion rate). ${completionRate > 50 ? 'Keep up the great work!' : 'Focus on finishing active tasks.'}`,
+      action: 'View completed tasks →'
+    });
+  }
+  
+  // Active tasks insight
+  if (activeTasks > 5) {
+    insights.push({
       type: 'time' as const,
-      title: 'Peak Productivity',
-      description: 'You complete 3x more tasks on Tuesdays between 2-4 PM. Schedule important work during this time.',
-    },
-    {
+      title: 'Many Active Tasks',
+      description: `You have ${activeTasks} tasks in progress. Consider focusing on completing a few before starting new ones.`,
+    });
+  }
+  
+  // Monthly goal insight
+  const now = new Date();
+  const thisMonthTasks = tasks.filter(t => {
+    const taskDate = new Date(t.createdAt);
+    return taskDate.getMonth() === now.getMonth() && taskDate.getFullYear() === now.getFullYear();
+  });
+  
+  if (thisMonthTasks.length > 0) {
+    insights.push({
       type: 'goal' as const,
-      title: 'Almost There!',
-      description: 'You\'re 8 tasks away from your monthly goal. Keep up the momentum!',
-      action: 'View goals →'
-    },
-  ];
+      title: 'This Month',
+      description: `You've created ${thisMonthTasks.length} tasks this month. Keep building momentum!`,
+      action: 'View this month →'
+    });
+  }
 
   const handleExportReport = () => {
     const reportData = {

@@ -57,7 +57,7 @@ export const CreateTaskModal = ({ open, onOpenChange }: CreateTaskModalProps) =>
   
   const onSubmit = async (data: CreateTaskFormData) => {
     try {
-      addTask({
+      await addTask({
         title: data.title,
         description: data.description || '',
         status: 'in-progress',
@@ -77,7 +77,7 @@ export const CreateTaskModal = ({ open, onOpenChange }: CreateTaskModalProps) =>
       form.reset();
     } catch (error) {
       toast.error('Failed to create task', {
-        description: 'Please try again',
+        description: error instanceof Error ? error.message : 'Please try again',
       });
     }
   };
