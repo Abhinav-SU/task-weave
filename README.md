@@ -24,7 +24,9 @@ Build powerful AI workflows by chaining multiple LLMs together. Use the **right 
 
 <div align="center">
 
-[![TaskWeave Demo](https://img.youtube.com/vi/RxV2DxpXp8Q/maxresdefault.jpg)](https://www.youtube.com/watch?v=RxV2DxpXp8Q)
+<a href="https://www.youtube.com/watch?v=RxV2DxpXp8Q" target="_blank">
+  <img src="https://img.youtube.com/vi/RxV2DxpXp8Q/0.jpg" alt="TaskWeave Demo Video" style="max-width:100%; border-radius:8px;">
+</a>
 
 ### 🎥 [Watch Demo Video](https://www.youtube.com/watch?v=RxV2DxpXp8Q)
 
