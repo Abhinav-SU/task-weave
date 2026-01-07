@@ -22,16 +22,11 @@ Build powerful AI workflows by chaining multiple LLMs together. Use the **right 
 
 ## 🎬 Demo
 
-<!-- TODO: Replace with your hosted video URL -->
-<!-- Option 1: YouTube embed -->
-<!-- [![TaskWeave Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID) -->
-
-<!-- Option 2: Direct video link -->
-<!-- https://your-cdn.com/TaskWeave-Demo-4K-Final.mp4 -->
-
 <div align="center">
 
-### 🎥 [Watch Demo Video](https://github.com/YOUR_USERNAME/TaskWeave/releases/tag/demo)
+[![TaskWeave Demo](https://img.youtube.com/vi/RxV2DxpXp8Q/maxresdefault.jpg)](https://www.youtube.com/watch?v=RxV2DxpXp8Q)
+
+### 🎥 [Watch Demo Video](https://www.youtube.com/watch?v=RxV2DxpXp8Q)
 
 *1:30 min • 4K Quality • Full Platform Walkthrough*
 

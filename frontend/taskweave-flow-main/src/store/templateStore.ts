@@ -1094,14 +1094,14 @@ export const useTemplateStore = create<TemplateStore>()(
       setCurrentTemplate: (template) => {
         set({ currentTemplate: template });
       },
-
+      
       updateCurrentTemplate: (updates) => {
         const current = get().currentTemplate;
         if (current) {
           set({ currentTemplate: { ...current, ...updates } });
         }
       },
-
+      
       saveTemplate: async (template) => {
         set({ isLoading: true, error: null });
         try {
@@ -1120,7 +1120,7 @@ export const useTemplateStore = create<TemplateStore>()(
           set({ error: 'Failed to save template', isLoading: false });
         }
       },
-
+      
       deleteTemplate: async (id) => {
         set({ isLoading: true, error: null });
         try {
@@ -1131,11 +1131,11 @@ export const useTemplateStore = create<TemplateStore>()(
           set({ error: 'Failed to delete template', isLoading: false });
         }
       },
-
+      
       getTemplateById: (id) => {
         return get().templates.find(t => t.id === id);
       },
-
+      
       duplicateTemplate: async (id) => {
         const template = get().getTemplateById(id);
         if (template) {
