@@ -15,6 +15,8 @@ import Templates from "./pages/Templates";
 import TemplateBuilder from "./pages/TemplateBuilder";
 import Analytics from "./pages/Analytics";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -44,6 +46,8 @@ const AppContent = () => {
         <Route path="/dashboard/templates/builder/:id" element={<ProtectedRoute><TemplateBuilder /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><AnalyticsDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/analytics-old" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+        <Route path="/dashboard/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

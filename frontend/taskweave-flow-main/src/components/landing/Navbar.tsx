@@ -47,9 +47,9 @@ export const Navbar = () => {
               <a href="#how-it-works" className="text-sm hover:text-primary transition-colors">How It Works</a>
               <a href="#pricing" className="text-sm hover:text-primary transition-colors">Pricing</a>
               <a href="#faq" className="text-sm hover:text-primary transition-colors">FAQ</a>
-              <Button variant="ghost" size="sm" className="w-full">Sign In</Button>
-              <Button size="sm" className="w-full gradient-primary text-white">
-                Install Extension
+              <Button variant="ghost" size="sm" className="w-full" onClick={() => navigate('/dashboard')}>Dashboard</Button>
+              <Button size="sm" className="w-full gradient-primary text-white" onClick={() => navigate('/dashboard')}>
+                Get Started
               </Button>
             </div>
           </div>

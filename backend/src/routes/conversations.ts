@@ -228,6 +228,40 @@ const conversationRoutes: FastifyPluginAsync = async (fastify) => {
       return reply.code(500).send({ error: 'Internal server error' });
     }
   });
+
+  // Compress conversation context
+  fastify.post('/:id/compress', {
+    onRequest: [fastify.authenticate],
+  }, async (request, reply) => {
+    try {
+      const { userId } = request.user as { userId: string };
+      const { id } = request.params as { id: string };
+      const { strategy } = request.body as { strategy?: 'summarize' | 'entities' };
+
+      // Verify conversation belongs to user
+      const conversation = await db.query.conversations.findFirst({
+        where: eq(conversations.id, id),
+        with: {
+          task: {
+            where: eq(tasks.user_id, userId),
+          },
+        },
+      });
+
+      if (!conversation || !conversation.task) {
+        return reply.code(404).send({ error: 'Conversation not found' });
+      }
+
+      // Import and use context service
+      const { contextService } = await import('../services/ContextService');
+      const compression = await contextService.compressConversation(id, strategy || 'summarize');
+
+      return reply.code(201).send(compression);
+    } catch (error) {
+      fastify.log.error(error);
+      return reply.code(500).send({ error: 'Internal server error' });
+    }
+  });
 };
 
 export default conversationRoutes;

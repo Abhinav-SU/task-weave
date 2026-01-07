@@ -1,26 +1,26 @@
 import { motion } from "framer-motion";
-import { Infinity, Minimize2, GitBranch, Grid3x3, FileStack, Users } from "lucide-react";
+import { Workflow, Zap, GitBranch, Grid3x3, FileStack, Play } from "lucide-react";
 
 const features = [
   {
-    icon: Infinity,
-    title: "Seamless Continuity",
-    description: "Continue your AI conversations across platforms without losing a single message or piece of context."
+    icon: Workflow,
+    title: "Visual Workflow Builder",
+    description: "Drag-and-drop nodes to create AI workflows. Connect multiple models in sequence to solve complex problems."
   },
   {
-    icon: Minimize2,
-    title: "Smart Context Compression",
-    description: "Automatically compress large conversations while preserving meaning, saving you tokens and costs."
+    icon: Zap,
+    title: "Multi-LLM Chaining",
+    description: "Chain different AI models together. Use GPT-4 for research → Gemini for analysis → GPT-4 for formatting."
   },
   {
     icon: GitBranch,
-    title: "Version Control for Conversations",
-    description: "Branch, merge, and track your AI conversations like code. Never lose important iterations."
+    title: "Variable Interpolation",
+    description: "Pass outputs between workflow nodes seamlessly. Each AI step builds on the previous results."
   },
   {
     icon: Grid3x3,
-    title: "10+ AI Platforms",
-    description: "Works seamlessly with ChatGPT, Claude, Gemini, Perplexity, and more platforms out of the box."
+    title: "Multiple AI Providers",
+    description: "Works with OpenAI GPT-4, Google Gemini, and more. Choose the best model for each task."
   },
   {
     icon: FileStack,
@@ -28,9 +28,9 @@ const features = [
     description: "Pre-built workflow templates for common tasks. Start productive immediately with proven patterns."
   },
   {
-    icon: Users,
-    title: "Team Collaboration",
-    description: "Share tasks, templates, and insights with your team. Collaborate on complex AI workflows together."
+    icon: Play,
+    title: "Real-time Execution",
+    description: "Watch your workflows execute step-by-step. See results and track progress in real-time with live updates."
   }
 ];
 

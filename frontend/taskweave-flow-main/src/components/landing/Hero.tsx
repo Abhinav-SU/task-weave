@@ -1,8 +1,68 @@
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Play, Chrome, CheckCircle2, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, Zap, CheckCircle2, ArrowRight, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+// Demo Video Modal Component
+const DemoVideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  // TODO: Replace with your hosted video URL (YouTube, Vimeo, or CDN)
+  const DEMO_VIDEO_URL = "https://www.youtube.com/embed/YOUR_VIDEO_ID";
+  
+  if (!isOpen) return null;
+  
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+          
+          {/* Video Placeholder - Replace with actual video when hosted */}
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+            <div className="text-center p-8">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/20 flex items-center justify-center">
+                <Play className="w-10 h-10 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold mb-2">Demo Video Coming Soon</h3>
+              <p className="text-muted-foreground mb-6">
+                Upload the video to YouTube or a CDN, then update the URL in Hero.tsx
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Video file: <code className="bg-muted px-2 py-1 rounded">TaskWeave-Demo-4K-Final.mp4</code>
+              </p>
+            </div>
+          </div>
+          
+          {/* Uncomment this when you have a real video URL */}
+          {/* <iframe
+            src={DEMO_VIDEO_URL}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          /> */}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
 
 const FloatingBadge = ({ children, delay, position }: { children: React.ReactNode; delay: number; position: string }) => (
   <motion.div
@@ -35,7 +95,8 @@ const PlatformCard = ({ name, color, delay }: { name: string; color: string; del
 
 export const Hero = () => {
   const [typedText, setTypedText] = useState("");
-  const fullText = "TaskWeave lets you continue conversations seamlessly across ChatGPT, Claude, Gemini, and more";
+  const [showDemoModal, setShowDemoModal] = useState(false);
+  const fullText = "Build powerful AI workflows by chaining multiple LLMs together. Use the right model for each step.";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,11 +125,11 @@ export const Hero = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              Never Lose Your{" "}
+              Orchestrate Multiple{" "}
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                AI Conversations
+                AI Models
               </span>{" "}
-              Again
+              in One Workflow
             </h1>
 
             <motion.p
@@ -92,10 +153,15 @@ export const Hero = () => {
                 className="gradient-primary text-white shadow-glow group text-base px-8"
                 onClick={() => navigate('/dashboard')}
               >
-                <Chrome className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-                Install Extension
+                <Zap className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                Get Started Free
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 text-base px-8 border-2 border-primary text-primary hover:bg-primary/5">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="gap-2 text-base px-8 border-2 border-primary text-primary hover:bg-primary/5"
+                onClick={() => setShowDemoModal(true)}
+              >
                 <Play className="w-5 h-5" />
                 Watch Demo
               </Button>
@@ -193,6 +259,9 @@ export const Hero = () => {
           </motion.div>
         </div>
       </div>
+      
+      {/* Demo Video Modal */}
+      <DemoVideoModal isOpen={showDemoModal} onClose={() => setShowDemoModal(false)} />
     </section>
   );
 };

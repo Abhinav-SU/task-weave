@@ -25,7 +25,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
-      const userId = request.user?.id;
+      const { userId } = request.user as { userId: string };
       
       // Fetch tasks marked as templates
       const templates = await db
@@ -34,7 +34,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
         .where(
           and(
             eq(tasks.user_id, userId),
-            eq(tasks.metadata, { isTemplate: true } as any)
+            eq(tasks.is_template, 'yes') // Use is_template field
           )
         )
         .orderBy(desc(tasks.updated_at));
@@ -51,6 +51,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
         estimatedTime: task.metadata?.estimatedTime || 30,
         nodes: task.metadata?.nodes || [],
         edges: task.metadata?.edges || [],
+        variables: task.metadata?.variables || {},
         createdAt: task.created_at,
         updatedAt: task.updated_at,
       }));
@@ -68,7 +69,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
   }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
-      const userId = request.user?.id;
+      const { userId } = request.user as { userId: string };
 
       const [task] = await db
         .select()
@@ -111,7 +112,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
-      const userId = request.user?.id;
+      const { userId } = request.user as { userId: string };
       const data = templateSchema.parse(request.body);
 
       const [template] = await db
@@ -120,10 +121,11 @@ export default async function templateRoutes(fastify: FastifyInstance) {
           user_id: userId,
           title: data.name,
           description: data.description || '',
-          status: 'active',
+          status: 'archived', // Templates are not active tasks
+          platform: 'workflow', // Mark as workflow template
           tags: data.tags,
+          is_template: 'true', // Mark this as a template
           metadata: {
-            isTemplate: true,
             category: data.category,
             icon: data.icon,
             isPublic: data.isPublic,
@@ -150,12 +152,17 @@ export default async function templateRoutes(fastify: FastifyInstance) {
       };
 
       reply.status(201).send(formattedTemplate);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.status(400).send({ error: 'Validation error', details: error.errors });
       }
-      request.log.error(error);
-      reply.status(500).send({ error: 'Failed to create template' });
+      request.log.error('Template creation error:', error);
+      console.error('Template creation error:', error);
+      reply.status(500).send({ 
+        error: 'Failed to create template', 
+        message: error.message,
+        details: error.toString()
+      });
     }
   });
 
@@ -165,7 +172,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
   }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
-      const userId = request.user?.id;
+      const { userId } = request.user as { userId: string };
       const updates = templateSchema.partial().parse(request.body);
 
       // Verify ownership
@@ -230,7 +237,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
   }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
-      const userId = request.user?.id;
+      const { userId } = request.user as { userId: string };
 
       const [deleted] = await db
         .delete(tasks)

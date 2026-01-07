@@ -1,0 +1,15 @@
+{
+  "credentials": {
+    "email": "test@taskweave.com",
+    "password": "password123"
+  },
+  "timing": {
+    "shortDelay": 1000,
+    "mediumDelay": 3000,
+    "longDelay": 5000
+  },
+  "urls": {
+    "frontend": "http://localhost:8080",
+    "backend": "http://localhost:3000"
+  }
+}

@@ -42,35 +42,38 @@ export default function AllTasks() {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-1 p-1 bg-secondary/30 rounded-lg">
             <Button
-              variant={viewMode === 'grid' ? 'default' : 'outline'}
+              variant={viewMode === 'grid' ? 'default' : 'ghost'}
               size="icon"
               onClick={() => setViewMode('grid')}
+              className="h-9 w-9"
             >
               <Grid className="w-4 h-4" />
             </Button>
             <Button
-              variant={viewMode === 'list' ? 'default' : 'outline'}
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
               size="icon"
               onClick={() => setViewMode('list')}
+              className="h-9 w-9"
             >
               <List className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <Input
               placeholder="Search tasks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full"
             />
           </div>
           
           <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as TaskStatus | "all")}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -81,9 +84,10 @@ export default function AllTasks() {
             </SelectContent>
           </Select>
 
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2 whitespace-nowrap">
             <Filter className="w-4 h-4" />
-            More Filters
+            <span className="hidden sm:inline">More Filters</span>
+            <span className="sm:hidden">Filters</span>
           </Button>
         </div>
 

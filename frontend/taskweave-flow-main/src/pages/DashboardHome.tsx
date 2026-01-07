@@ -41,17 +41,18 @@ export default function DashboardHome() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">Dashboard</h1>
             <p className="text-muted-foreground">
               Welcome back! Here's what's happening with your tasks.
             </p>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2">
             <Button 
               variant="outline" 
+              size="default"
               className="gap-2"
               onClick={() => {
                 // TODO: Implement import functionality
@@ -59,18 +60,21 @@ export default function DashboardHome() {
               }}
             >
               <Download className="w-4 h-4" />
-              Import
+              <span className="hidden sm:inline">Import</span>
             </Button>
             <Button 
               variant="outline" 
+              size="default"
               className="gap-2"
               onClick={() => navigate('/dashboard/templates')}
             >
               <FileText className="w-4 h-4" />
-              Templates
+              <span className="hidden sm:inline">Templates</span>
             </Button>
             <Button 
-              className="gradient-primary text-white gap-2"
+              variant="default"
+              size="default"
+              className="gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white"
               onClick={() => setCreateModalOpen(true)}
             >
               <Plus className="w-4 h-4" />

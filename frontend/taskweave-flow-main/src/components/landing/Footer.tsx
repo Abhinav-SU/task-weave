@@ -5,7 +5,7 @@ const footerLinks = {
     { name: "Features", href: "#features" },
     { name: "Pricing", href: "#pricing" },
     { name: "Templates", href: "/dashboard/templates" },
-    { name: "Extension", href: "#" }
+    { name: "Dashboard", href: "/dashboard" }
   ],
   resources: [
     { name: "Documentation", href: "#" },
@@ -43,7 +43,7 @@ export const Footer = () => {
               <span className="text-2xl font-bold">TaskWeave</span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-sm leading-relaxed">
-              Never lose context between AI tools. Seamlessly continue conversations across ChatGPT, Claude, Gemini, and more.
+              Build powerful AI workflows by chaining multiple LLMs together. Visual workflow builder for orchestrating GPT-4, Gemini, and more.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social) => (

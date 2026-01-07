@@ -5,15 +5,28 @@ bun.lockb
 yarn.lock
 pnpm-lock.yaml
 
-# Environment variables
+# Environment variables (CRITICAL - Never commit!)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+*.env
+*.env.local
+*.env.production
+*.env.development
+backend/.env
+
+# API Keys & Secrets (Double protection)
+**/config/secrets.json
+**/config/keys.json
+**/*secret*.json
+**/*credentials*.json
 
 # Build output
 dist/
 build/
 *.tsbuildinfo
+.next/
+out/
 
 # Logs
 logs/
@@ -30,6 +43,8 @@ Thumbs.db
 *.swp
 *.swo
 *~
+.AppleDouble
+.LSOverride
 
 # IDE
 .vscode/
@@ -38,18 +53,87 @@ Thumbs.db
 *.ntvs*
 *.njsproj
 *.sln
+*.sw?
+.project
+.classpath
+.settings/
 
 # Testing
 coverage/
 .nyc_output/
+*.test.js
+*.spec.js
 
 # Temporary files
 *.tmp
 *.temp
 .cache/
+tmp/
 
-# Docker volumes (data persisted elsewhere)
-# We keep docker-compose.yml tracked
+# Database
+*.sqlite
+*.db
+*.db-journal
 
-# PDF files (documentation source)
-*.pdf
+# Docker
+docker-compose.override.yml
+
+# Documentation archive
+docs/archive/
+
+# Scripts - keep only README
+scripts/*.ps1
+scripts/*.js
+scripts/*.py
+scripts/*.txt
+!scripts/README.md
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# User-specific files
+.history/
+
+# ============================================
+# Demo & Media Files (Large files - not for Git)
+# ============================================
+
+# Video files
+*.mp4
+*.webm
+*.avi
+*.mov
+*.mkv
+
+# Audio files  
+*.mp3
+*.wav
+*.m4a
+
+# Demo folders
+demo-screenshots/
+demo-screenshots-v2/
+demo-screenshots-v3/
+demo-screenshots-v4/
+demo-videos/
+voiceover/
+
+# Temporary concat files
+concat*.txt
+
+# Auto-generated HTML files
+auto-fix*.html
+clear-cache*.html
+fix-frontend-cache.js
+auto-fix-templates.ps1
+
+# Hash-named temp files from Playwright
+[0-9a-f]*.webm
+
+# Demo documentation (optional - remove if you want to keep)
+DEMO_*.md
+CURRENT_ISSUES.md
+TASK_DETAIL_FIX.md
+UI_BUGS_FIXED.md

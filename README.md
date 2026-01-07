@@ -1,309 +1,335 @@
-# TaskWeave - Universal AI Task Continuity System
+# TaskWeave
 
-TaskWeave is a comprehensive system for managing AI conversations across multiple platforms (ChatGPT, Claude, Gemini, etc.) with intelligent context compression and seamless conversation migration.
+<div align="center">
 
-## 🏗️ Project Structure
+![TaskWeave Logo](https://img.shields.io/badge/TaskWeave-Multi--LLM%20Orchestration-6366f1?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDJ2NGw0LTQiLz48cGF0aCBkPSJNMTIgMnY0bC00LTQiLz48cGF0aCBkPSJNMTIgMjJ2LTRsNC00Ii8+PHBhdGggZD0iTTEyIDIydi00bC00IDQiLz48cGF0aCBkPSJNMjIgMTJoLTRsNC00Ii8+PHBhdGggZD0iTTIyIDEyaC00bDQgNCIvPjxwYXRoIGQ9Ik0yIDEyaDRsLTQtNCIvPjxwYXRoIGQ9Ik0yIDEyaDRsLTQgNCIvPjwvc3ZnPg==)
+
+### **Intelligent Multi-LLM Workflow Orchestration Platform**
+
+Build powerful AI workflows by chaining multiple LLMs together. Use the **right model** for each step - optimized for cost and quality.
+
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+
+[Features](#-features) • [Demo](#-demo) • [Quick Start](#-quick-start) • [Templates](#-templates) • [Documentation](#-documentation)
+
+</div>
+
+---
+
+## 🎬 Demo
+
+<!-- TODO: Replace with your hosted video URL -->
+<!-- Option 1: YouTube embed -->
+<!-- [![TaskWeave Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID) -->
+
+<!-- Option 2: Direct video link -->
+<!-- https://your-cdn.com/TaskWeave-Demo-4K-Final.mp4 -->
+
+<div align="center">
+
+### 🎥 [Watch Demo Video](https://github.com/YOUR_USERNAME/TaskWeave/releases/tag/demo)
+
+*1:30 min • 4K Quality • Full Platform Walkthrough*
+
+</div>
+
+**Demo showcases:**
+- 🏠 Landing page & login flow
+- 📊 Dashboard overview
+- 📚 11 cost-optimized multi-LLM templates
+- ▶️ Running a workflow with live execution
+- 📝 Viewing AI conversations & results
+- 🎨 Visual Template Builder with drag-and-drop
+- 📋 Task management & history
+
+---
+
+## 🎯 What is TaskWeave?
+
+TaskWeave lets you create visual workflows that chain multiple AI models together, using the **best model for each task**:
+
+```
+┌───────────────┐      ┌───────────────┐      ┌───────────────┐
+│  Gemini 2.5   │─────▶│    GPT-4o     │─────▶│  Gemini 2.5   │
+│   (Research)  │      │  (Validate)   │      │   (Report)    │
+│   💰 $0.001   │      │   💵 $0.01    │      │   💰 $0.002   │
+└───────────────┘      └───────────────┘      └───────────────┘
+```
+
+**Why Multi-LLM?**
+- 🎯 **Right tool for the job** - Gemini for bulk processing, GPT-4 for precision
+- 💰 **Cost optimization** - Use efficient models for 80% of work, premium for critical steps
+- ⚡ **Better results** - Each model contributes its strengths
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🎨 **Visual Workflow Builder** | Drag-and-drop nodes to create AI workflows |
+| 🔗 **Multi-LLM Chaining** | Connect GPT-4, Gemini, Claude in sequence |
+| 💰 **Cost-Optimized Templates** | Pre-built workflows balanced for quality & cost |
+| 📊 **LLM Suggestions** | AI recommends the best model for each task |
+| ⚡ **Real-time Execution** | Watch workflows execute step-by-step via WebSocket |
+| 🧩 **Pre-built Blocks** | Drag common patterns like "Research & Summarize" |
+| 📝 **Variable System** | Pass outputs between nodes with `{{variable}}` syntax |
+| 🤖 **AI Agents** | Autonomous agents with tool access (coming soon) |
+| 🔌 **MCP Integration** | Model Context Protocol server support |
+
+---
+
+## 📚 Templates
+
+TaskWeave includes **11 production-ready, cost-optimized templates**:
+
+### Research & Analysis
+| Template | LLMs Used | Est. Cost |
+|----------|-----------|-----------|
+| 🔬 **Deep Research Report** | Gemini → GPT-4 → Gemini | $0.03 - $0.08 |
+| 📊 **Competitive Analysis** | Gemini → GPT-4 → Gemini | $0.04 - $0.10 |
+| 📈 **Market Research** | Gemini → GPT-4 → Gemini | $0.03 - $0.08 |
+
+### Development
+| Template | LLMs Used | Est. Cost |
+|----------|-----------|-----------|
+| 💻 **Code Review Pipeline** | Gemini → GPT-4 → Gemini | $0.02 - $0.05 |
+| 🐛 **Bug Analysis & Fix** | Gemini → GPT-4 → Gemini | $0.02 - $0.06 |
+
+### Content & Writing
+| Template | LLMs Used | Est. Cost |
+|----------|-----------|-----------|
+| ✍️ **Blog Post Generator** | Gemini → GPT-4 → Gemini | $0.02 - $0.05 |
+| 📧 **Email Campaign** | Gemini → GPT-4 | $0.01 - $0.03 |
+
+### Data & Analysis
+| Template | LLMs Used | Est. Cost |
+|----------|-----------|-----------|
+| 📉 **Data Insights** | Gemini → GPT-4 → Gemini | $0.02 - $0.06 |
+| 🎯 **Decision Analysis** | Gemini → GPT-4 → Gemini | $0.03 - $0.08 |
+
+### Productivity
+| Template | LLMs Used | Est. Cost |
+|----------|-----------|-----------|
+| 📝 **Meeting Summary** | Gemini → GPT-4 | $0.01 - $0.03 |
+| 👔 **Interview Prep** | Gemini → GPT-4 → Gemini | $0.02 - $0.05 |
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js 18+**
+- **Docker** (for PostgreSQL)
+- **API Keys:**
+  - [OpenAI](https://platform.openai.com/api-keys) (GPT-4)
+  - [Google AI Studio](https://aistudio.google.com/app/apikey) (Gemini)
+
+### Installation
+
+```bash
+# Clone repository
+git clone https://github.com/YOUR_USERNAME/TaskWeave.git
+cd TaskWeave
+
+# Install dependencies
+cd backend && npm install
+cd ../frontend/taskweave-flow-main && npm install
+```
+
+### Configuration
+
+```bash
+# Copy environment template
+cp backend/env.example backend/.env
+```
+
+Edit `backend/.env`:
+
+```env
+DATABASE_URL=postgresql://taskweave_user:taskweave_pass@localhost:5444/taskweave_db
+JWT_SECRET=your-super-secret-jwt-key-change-this
+OPENAI_API_KEY=sk-proj-your-key
+GOOGLE_API_KEY=your-google-ai-studio-key
+PORT=3000
+```
+
+### Run
+
+```bash
+# Terminal 1: Start PostgreSQL
+docker-compose up -d
+
+# Terminal 2: Start Backend (http://localhost:3000)
+cd backend && npm run dev
+
+# Terminal 3: Start Frontend (http://localhost:8080)
+cd frontend/taskweave-flow-main && npm run dev
+```
+
+### Access
+
+🌐 Open **http://localhost:8080**
+
+**Demo Account:**
+- Email: `demo@taskweave.com`
+- Password: `Demo1234!`
+
+---
+
+## 🏗️ Architecture
 
 ```
 TaskWeave/
-├── backend/                # Node.js + TypeScript + Fastify API
+├── backend/                    # Node.js + Fastify API
 │   ├── src/
-│   │   ├── db/            # Database schema & migrations
-│   │   ├── routes/        # API routes (auth, tasks, conversations)
-│   │   ├── services/      # Business logic services
-│   │   ├── middleware/    # Custom middleware
-│   │   ├── websocket/     # WebSocket handlers
-│   │   └── utils/         # Utility functions
-│   ├── package.json
-│   └── tsconfig.json
-├── frontend/              # React + TypeScript dashboard
-└── extension/             # Browser extension (Manifest V3)
+│   │   ├── routes/            # API endpoints
+│   │   │   ├── auth.ts        # Authentication
+│   │   │   ├── tasks.ts       # Task management
+│   │   │   ├── templates.ts   # Template CRUD
+│   │   │   ├── executions.ts  # Workflow execution
+│   │   │   ├── agents.ts      # AI Agents
+│   │   │   └── mcp.ts         # MCP integration
+│   │   ├── services/
+│   │   │   ├── WorkflowExecutionService.ts  # Core orchestration
+│   │   │   ├── AgentService.ts              # AI agents
+│   │   │   └── MCPService.ts                # MCP tools
+│   │   ├── llm-providers/     # LLM integrations
+│   │   │   ├── openai.ts
+│   │   │   ├── google.ts
+│   │   │   ├── anthropic.ts
+│   │   │   └── gateway.ts     # Unified LLM gateway
+│   │   └── db/                # Drizzle ORM schemas
+│   └── migrations/
+│
+├── frontend/                   # React + TypeScript
+│   └── taskweave-flow-main/
+│       ├── src/
+│       │   ├── pages/
+│       │   │   ├── Dashboard.tsx
+│       │   │   ├── Templates.tsx
+│       │   │   ├── TemplateBuilder.tsx  # Visual workflow builder
+│       │   │   └── TaskDetail.tsx
+│       │   ├── components/
+│       │   │   ├── landing/   # Landing page sections
+│       │   │   └── template-builder/
+│       │   │       ├── AINode.tsx
+│       │   │       ├── AgentNode.tsx
+│       │   │       ├── MCPToolNode.tsx
+│       │   │       ├── NodePalette.tsx
+│       │   │       └── PropertyPanel.tsx
+│       │   └── store/
+│       │       └── templateStore.ts  # 11 pre-built templates
+│       └── public/
+│
+├── docs/                       # Documentation
+└── docker-compose.yml          # PostgreSQL + Redis
 ```
 
-## 🚀 Features
-
-### Backend (✅ Completed)
-- **Authentication System**
-  - JWT-based authentication
-  - Refresh token rotation
-  - OAuth 2.0 ready (Google integration prepared)
-  - Secure password hashing with bcrypt
-
-- **Task Management API**
-  - Create, read, update, delete tasks
-  - Filter by status, platform, tags
-  - Pagination support
-  - Task statistics endpoint
-
-- **Conversation Management API**
-  - Create conversations linked to tasks
-  - Branch conversations (parent-child relationships)
-  - Add messages with metadata (code blocks, images, artifacts)
-  - Conversation tree generation
-  - Token counting and statistics
-
-- **Database Schema** (Drizzle ORM + PostgreSQL)
-  - Users table with OAuth support
-  - Tasks with flexible metadata
-  - Conversations with branching support
-  - Messages with embeddings (pgvector)
-  - Context compressions for optimization
-  - Refresh tokens for secure auth
-
-### In Progress
-- WebSocket real-time updates
-- Context compression service
-- Browser extension foundation
-- React dashboard
-
-## 📋 Prerequisites
-
-- Node.js 18+ and npm/yarn
-- PostgreSQL 14+ with pgvector extension
-- Redis (for caching and WebSocket)
-- OpenAI API key (for context compression)
-
-## 🛠️ Installation
-
-### 1. Clone Repository
-
-```bash
-git clone <repository-url>
-cd TaskWeave
-```
-
-### 2. Backend Setup
-
-```bash
-cd backend
-npm install
-```
-
-### 3. Environment Configuration
-
-Copy the environment template:
-
-```bash
-cp env.example .env
-```
-
-Edit `.env` with your configuration:
-
-```env
-# Database
-DATABASE_URL=postgresql://postgres:password@localhost:5432/taskweave
-
-# JWT Secrets (change these!)
-JWT_SECRET=your-secret-key-here
-JWT_REFRESH_SECRET=your-refresh-secret-here
-
-# OpenAI (for context compression)
-OPENAI_API_KEY=your-openai-api-key
-
-# OAuth
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-```
-
-### 4. Database Setup
-
-**Option A: Using Docker (Recommended)**
-
-```bash
-docker-compose up -d
-```
-
-**Option B: Manual Setup**
-
-```bash
-# Create database
-createdb taskweave
-
-# Install pgvector extension
-psql taskweave -c "CREATE EXTENSION vector;"
-```
-
-### 5. Run Migrations
-
-```bash
-npm run db:migrate
-```
-
-### 6. Seed Database (Optional)
-
-```bash
-npm run db:seed
-```
-
-## 🏃 Running the Application
-
-### Development Mode
-
-```bash
-cd backend
-npm run dev
-```
-
-The server will start on `http://localhost:3000`
-
-### Production Mode
-
-```bash
-npm run build
-npm start
-```
-
-## 📡 API Endpoints
-
-### Authentication
-
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/refresh` - Refresh access token
-- `POST /api/auth/logout` - Logout user
-- `GET /api/auth/me` - Get current user
-
-### Tasks
-
-- `POST /api/tasks` - Create task
-- `GET /api/tasks` - List tasks (with filters)
-- `GET /api/tasks/:id` - Get task by ID
-- `PATCH /api/tasks/:id` - Update task
-- `DELETE /api/tasks/:id` - Delete task
-- `GET /api/tasks/:id/stats` - Get task statistics
-
-### Conversations
-
-- `POST /api/conversations` - Create conversation
-- `GET /api/conversations/:id` - Get conversation
-- `POST /api/conversations/:id/messages` - Add message
-- `GET /api/conversations/:id/tree` - Get conversation tree
-- `DELETE /api/conversations/:id` - Delete conversation
-
-## 🔒 Authentication
-
-All API endpoints (except `/api/auth/register` and `/api/auth/login`) require authentication.
-
-Include the JWT token in the Authorization header:
-
-```
-Authorization: Bearer <your-access-token>
-```
-
-## 📊 Database Schema
-
-### Key Tables
-
-- **users** - User accounts with OAuth support
-- **tasks** - Main task entities
-- **conversations** - AI conversations linked to tasks
-- **messages** - Individual messages in conversations
-- **context_compressions** - Compressed conversation states
-- **refresh_tokens** - Secure token storage
-
-## 🧪 Testing
-
-```bash
-npm test              # Run tests
-npm run test:coverage # Run with coverage
-```
-
-## 📝 API Examples
-
-### Register User
-
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "securePassword123",
-    "name": "John Doe"
-  }'
-```
-
-### Create Task
-
-```bash
-curl -X POST http://localhost:3000/api/tasks \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your-token>" \
-  -d '{
-    "title": "Implement user authentication",
-    "description": "Build complete auth system",
-    "platform": "chatgpt",
-    "tags": ["backend", "security"]
-  }'
-```
-
-### Add Conversation
-
-```bash
-curl -X POST http://localhost:3000/api/conversations \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your-token>" \
-  -d '{
-    "task_id": "task-uuid-here",
-    "platform": "chatgpt",
-    "title": "Auth implementation discussion"
-  }'
-```
-
-## 🔄 Development Workflow
-
-1. **Backend Development** [[memory:5499774]]
-   ```bash
-   cd backend
-   npm run dev
-   ```
-
-2. **Watch Mode** - Changes auto-reload with `tsx watch`
-
-3. **Database Changes**
-   ```bash
-   npm run db:generate  # Generate migrations
-   npm run db:push      # Push to database
-   ```
-
-## 🎯 Roadmap
-
-### Phase 1: Foundation (Current)
-- ✅ Project structure
-- ✅ Database schema
-- ✅ Authentication system
-- ✅ Task management API
-- ✅ Conversation management API
-
-### Phase 2: Core Features (Next)
-- ⏳ Context compression service
-- ⏳ WebSocket real-time updates
-- ⏳ Browser extension foundation
-- ⏳ ChatGPT injector
-- ⏳ Claude injector
-
-### Phase 3: Dashboard
-- ⏳ React frontend setup
-- ⏳ Task list view
-- ⏳ Conversation viewer
-- ⏳ Settings panel
-
-### Phase 4: Advanced Features
-- ⏳ Gemini support
-- ⏳ Perplexity support
-- ⏳ Export/import functionality
-- ⏳ Analytics dashboard
+---
+
+## 🛠️ Tech Stack
+
+<table>
+<tr>
+<td valign="top">
+
+### Backend
+- **Runtime:** Node.js 18+
+- **Framework:** Fastify
+- **Database:** PostgreSQL
+- **ORM:** Drizzle
+- **Auth:** JWT
+- **Real-time:** Socket.IO
+
+</td>
+<td valign="top">
+
+### Frontend
+- **Framework:** React 18
+- **Build:** Vite
+- **Styling:** TailwindCSS
+- **UI:** shadcn/ui
+- **State:** Zustand
+- **Flow:** React Flow
+
+</td>
+<td valign="top">
+
+### AI Integration
+- **OpenAI** GPT-4o, GPT-3.5
+- **Google** Gemini 2.5 Flash
+- **Anthropic** Claude 3.5
+- **Gateway:** Unified API
+- **MCP:** Tool integration
+
+</td>
+</tr>
+</table>
+
+---
+
+## 📖 Documentation
+
+| Document | Description |
+|----------|-------------|
+| 📘 [Documentation](docs/DOCUMENTATION.md) | Complete guide |
+| 🔒 [Security Checklist](docs/SECURITY_CHECKLIST.md) | Pre-deployment audit |
+| 🚀 [Production Guide](docs/PRODUCTION_READINESS.md) | Deployment steps |
+
+---
+
+## 📊 Project Status
+
+| Milestone | Status |
+|-----------|--------|
+| Multi-LLM Orchestration | ✅ Complete |
+| Visual Workflow Builder | ✅ Complete |
+| 11 Cost-Optimized Templates | ✅ Complete |
+| Real-time Execution | ✅ Complete |
+| AI Agent Support | 🔄 In Progress |
+| MCP Tool Integration | 🔄 In Progress |
+| Claude Integration | 📋 Planned |
+| Team Collaboration | 📋 Planned |
+
+---
 
 ## 🤝 Contributing
 
-This is a personal project, but feedback and suggestions are welcome!
+Contributions welcome! Please read our contributing guidelines first.
 
-## 📄 License
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-MIT License - See LICENSE file for details
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 ## 🙏 Acknowledgments
 
-- Built with Fastify, Drizzle ORM, and PostgreSQL
-- Inspired by the need for universal AI task continuity
-- Uses OpenAI for intelligent context compression
+- [Fastify](https://www.fastify.io/) - Fast and low overhead web framework
+- [shadcn/ui](https://ui.shadcn.com/) - Beautiful UI components
+- [React Flow](https://reactflow.dev/) - Node-based workflow builder
+- [OpenAI](https://openai.com/) & [Google AI](https://ai.google/) - LLM providers
 
+---
+
+<div align="center">
+
+**Built with ❤️ for intelligent AI workflow automation**
+
+[⬆ Back to top](#taskweave)
+
+</div>

@@ -47,6 +47,8 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
           status,
           platform: body.platform,
           tags: body.tags,
+          metadata: body.metadata,
+          is_template: 'no', // Always create as regular task, not template
         })
         .returning();
 
@@ -74,7 +76,10 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
         offset?: number;
       };
 
-      let conditions = [eq(tasks.user_id, userId)];
+      let conditions = [
+        eq(tasks.user_id, userId),
+        eq(tasks.is_template, 'no') // Only return regular tasks, not templates
+      ];
 
       if (status) {
         conditions.push(eq(tasks.status, status));
@@ -124,7 +129,7 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
           conversations: {
             with: {
               messages: {
-                orderBy: (messages, { asc }) => [asc(messages.sequence_number)],
+                orderBy: (messages, { asc }) => [asc(messages.created_at)],
               },
             },
             orderBy: (conversations, { desc }) => [desc(conversations.updated_at)],

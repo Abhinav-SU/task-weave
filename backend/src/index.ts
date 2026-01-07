@@ -7,6 +7,9 @@ import authRoutes from './routes/auth';
 import taskRoutes from './routes/tasks';
 import conversationRoutes from './routes/conversations';
 import templateRoutes from './routes/templates';
+import executionRoutes from './routes/executions';
+import { agentRoutes } from './routes/agents';
+import { mcpRoutes } from './routes/mcp';
 import { setupWebSocket } from './websocket';
 
 // Load environment variables
@@ -63,6 +66,9 @@ async function registerRoutes() {
   await app.register(taskRoutes, { prefix: '/api/tasks' });
   await app.register(conversationRoutes, { prefix: '/api/conversations' });
   await app.register(templateRoutes, { prefix: '/api/templates' });
+  await app.register(executionRoutes, { prefix: '/api/executions' });
+  await app.register(agentRoutes, { prefix: '/api/agents' });
+  await app.register(mcpRoutes, { prefix: '/api/mcp' });
 }
 
 // Start server
@@ -77,18 +83,26 @@ async function start() {
     await app.listen({ port: PORT, host: HOST });
     
     console.log(`
-🚀 TaskWeave Backend Server Started
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 TaskWeave 2.0 - Multi-LLM Orchestration Platform
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📡 HTTP Server: http://${HOST}:${PORT}
 🔌 WebSocket: ws://${HOST}:${PORT}
 🏥 Health: http://${HOST}:${PORT}/health
-🔐 Auth API: http://${HOST}:${PORT}/api/auth
-📋 Tasks API: http://${HOST}:${PORT}/api/tasks
-💬 Conversations API: http://${HOST}:${PORT}/api/conversations
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 API Endpoints:
+   🔐 Auth:       /api/auth
+   📋 Tasks:      /api/tasks
+   💬 Conversations: /api/conversations
+   📑 Templates:  /api/templates
+   ▶️  Executions: /api/executions
+   🤖 Agents:     /api/agents
+   🔌 MCP:        /api/mcp
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Environment: ${process.env.NODE_ENV || 'development'}
     `);
   } catch (err) {
+    console.error('❌ Fatal error starting server:');
+    console.error(err);
     app.log.error(err);
     process.exit(1);
   }

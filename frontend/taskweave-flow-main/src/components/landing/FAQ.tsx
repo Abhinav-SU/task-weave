@@ -8,36 +8,36 @@ import {
 
 const faqs = [
   {
-    question: "How does TaskWeave work?",
-    answer: "TaskWeave is a browser extension that captures and syncs your AI conversations across platforms. When you switch from ChatGPT to Claude, it automatically transfers the relevant context, maintaining continuity."
+    question: "What is TaskWeave?",
+    answer: "TaskWeave is an AI workflow orchestration platform that lets you chain multiple LLM models together. Create visual workflows where each step uses the best AI model for that specific task."
   },
   {
-    question: "Which AI platforms are supported?",
-    answer: "We support ChatGPT, Claude, Gemini, Perplexity, Poe, HuggingChat, and more. New platforms are added regularly based on user requests."
+    question: "Which AI models are supported?",
+    answer: "We currently support OpenAI GPT-4 and Google Gemini 2.5 Flash, with more providers coming soon. Each model has different strengths - use them strategically in your workflows."
   },
   {
-    question: "Is my conversation data secure?",
-    answer: "Absolutely. All data is encrypted end-to-end and stored securely. We never train models on your data or share it with third parties. You maintain full control over your conversations."
+    question: "How do workflows work?",
+    answer: "Create a workflow by adding AI nodes and connecting them. Each node calls an AI model with a specific prompt. Outputs from one node can be passed as inputs to the next, creating powerful multi-step AI automations."
   },
   {
     question: "Can I use it for free?",
-    answer: "Yes! Our free plan includes 10 tasks per month across 2 AI platforms. It's perfect for trying out TaskWeave and light usage. Upgrade to Pro for unlimited tasks and advanced features."
+    answer: "Yes! TaskWeave is currently free to use. You'll need your own API keys for the AI providers you want to use (OpenAI, Google, etc.)."
   },
   {
-    question: "How does context compression work?",
-    answer: "Our smart compression algorithm analyzes your conversation and removes redundant information while preserving meaning. This reduces token usage by up to 75% without losing important context."
+    question: "What are templates?",
+    answer: "Templates are pre-built workflows for common tasks like code review, research analysis, and documentation generation. Start with a template and customize it for your needs."
   },
   {
-    question: "Can I share tasks with my team?",
-    answer: "Yes! Team plan users can share tasks, templates, and insights. Set permissions, collaborate on complex workflows, and maintain team knowledge bases."
+    question: "Do I need API keys?",
+    answer: "Yes. You'll need API keys from the AI providers you want to use. Configure them in Settings. This gives you full control and direct access to the models."
   },
   {
-    question: "Does it work on mobile?",
-    answer: "Currently, TaskWeave is available as a browser extension for Chrome, Firefox, and Edge on desktop. Mobile support is on our roadmap and coming soon."
+    question: "Can I save and reuse workflows?",
+    answer: "Yes! Create custom workflows, save them as templates, and reuse them whenever needed. Share successful workflows across your projects."
   },
   {
-    question: "How do I install the extension?",
-    answer: "Click 'Install Extension' and you'll be directed to the Chrome Web Store (or your browser's extension store). Install it, sign up for an account, and you're ready to go in under 2 minutes."
+    question: "How do I get started?",
+    answer: "Sign up for an account, add your API keys in Settings, then browse the template gallery. Try running a template like 'Code Review' or 'Business Intelligence Research' to see workflows in action."
   }
 ];
 

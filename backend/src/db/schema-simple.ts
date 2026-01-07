@@ -23,6 +23,8 @@ export const tasks = pgTable('tasks', {
   platform: text('platform'),
   tags: jsonb('tags').$type<string[]>(),
   embedding: text('embedding'),
+  metadata: jsonb('metadata').$type<Record<string, any>>(),
+  is_template: text('is_template'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -50,6 +52,34 @@ export const messages = pgTable('messages', {
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// Workflow Executions table
+export const workflowExecutions = pgTable('workflow_executions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  template_id: uuid('template_id').references(() => tasks.id, { onDelete: 'set null' }),  // Made nullable for inline templates
+  task_id: uuid('task_id').references(() => tasks.id, { onDelete: 'cascade' }).notNull(),
+  user_id: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  status: text('status').notNull().default('pending'),
+  current_node: text('current_node'),
+  variables: jsonb('variables').$type<Record<string, any>>().notNull().default({}),
+  results: jsonb('results').$type<Record<string, any>>().notNull().default({}),
+  started_at: timestamp('started_at').defaultNow(),
+  completed_at: timestamp('completed_at'),
+  error: text('error'),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Context Compressions table
+export const contextCompressions = pgTable('context_compressions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  conversation_id: uuid('conversation_id').references(() => conversations.id, { onDelete: 'cascade' }).notNull(),
+  summary: text('summary').notNull(),
+  compressed_content: text('compressed_content').notNull(),
+  strategy: text('strategy').notNull(),
+  token_count: text('token_count'),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   tasks: many(tasks),
@@ -61,6 +91,7 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
     references: [users.id],
   }),
   conversations: many(conversations),
+  executions: many(workflowExecutions),
 }));
 
 export const conversationsRelations = relations(conversations, ({ one, many }) => ({
@@ -83,6 +114,21 @@ export const messagesRelations = relations(messages, ({ one }) => ({
   }),
 }));
 
+export const workflowExecutionsRelations = relations(workflowExecutions, ({ one }) => ({
+  template: one(tasks, {
+    fields: [workflowExecutions.template_id],
+    references: [tasks.id],
+  }),
+  task: one(tasks, {
+    fields: [workflowExecutions.task_id],
+    references: [tasks.id],
+  }),
+  user: one(users, {
+    fields: [workflowExecutions.user_id],
+    references: [users.id],
+  }),
+}));
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -92,4 +138,8 @@ export type Conversation = typeof conversations.$inferSelect;
 export type NewConversation = typeof conversations.$inferInsert;
 export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
+export type WorkflowExecution = typeof workflowExecutions.$inferSelect;
+export type NewWorkflowExecution = typeof workflowExecutions.$inferInsert;
+export type ContextCompression = typeof contextCompressions.$inferSelect;
+export type NewContextCompression = typeof contextCompressions.$inferInsert;
 

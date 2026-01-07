@@ -1,23 +1,23 @@
 import { motion } from "framer-motion";
-import { Download, Link2, Rocket, CheckCircle2 } from "lucide-react";
+import { FileText, Settings, Rocket, CheckCircle2 } from "lucide-react";
 
 const steps = [
   {
-    icon: Download,
-    title: "Install Extension",
-    description: "Add TaskWeave to your browser in seconds. Works with Chrome, Firefox, and Edge.",
-    image: "📥"
+    icon: FileText,
+    title: "Choose or Create Workflow",
+    description: "Start with a pre-built template or create your own custom workflow using our visual builder.",
+    image: "📋"
   },
   {
-    icon: Link2,
-    title: "Connect AI Tools",
-    description: "Link your favorite AI platforms. We support ChatGPT, Claude, Gemini, and more.",
-    image: "🔗"
+    icon: Settings,
+    title: "Configure AI Nodes",
+    description: "Set up what each AI model should do. Add prompts, variables, and connect outputs between nodes.",
+    image: "⚙️"
   },
   {
     icon: Rocket,
-    title: "Start Working",
-    description: "Begin your task anywhere and seamlessly continue it on any connected platform.",
+    title: "Execute & Monitor",
+    description: "Run your workflow and watch it execute in real-time. See results from each AI model as they complete.",
     image: "🚀"
   }
 ];
@@ -39,7 +39,7 @@ export const HowItWorks = () => {
             Get started in 3 simple steps
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            No complex setup. No configuration headaches. Just install and go.
+            No complex setup. Create your first AI workflow in minutes.
           </p>
         </motion.div>
 
