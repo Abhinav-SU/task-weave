@@ -43,3 +43,8 @@ All notable changes to this project are documented in this file.
 
 - Added backend unit tests for workflow node alias normalization and LLM retry behavior in `WorkflowExecutionService`.
 - Tests now verify both successful retry recovery and terminal retry failure behavior.
+
+### Documentation
+
+- Rewrote `README.md` as a full clone-to-run guide with aligned env values, migration/seed steps, and service startup flow.
+- Added frontend `.env.example` with API and WebSocket endpoint defaults.
