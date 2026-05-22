@@ -38,3 +38,8 @@ All notable changes to this project are documented in this file.
 - Added API rate limiting and security headers middleware (`@fastify/rate-limit`, `@fastify/helmet`).
 - Implemented `GET /api/tasks/search` to match frontend API usage.
 - Added exponential backoff retry handling for OpenAI/Gemini/Claude workflow node execution calls.
+
+### Testing
+
+- Added backend unit tests for workflow node alias normalization and LLM retry behavior in `WorkflowExecutionService`.
+- Tests now verify both successful retry recovery and terminal retry failure behavior.
