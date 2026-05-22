@@ -1,20 +1,11 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema-simple';
-import { config } from 'dotenv';
-
-// Load environment variables
-config();
-
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-  throw new Error('DATABASE_URL environment variable is not set');
-}
+import { env } from '../config/env';
 
 // Create PostgreSQL connection pool
 const pool = new Pool({
-  connectionString,
+  connectionString: env.DATABASE_URL,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
@@ -30,7 +21,6 @@ pool.on('connect', () => {
 
 pool.on('error', (err) => {
   console.error('❌ Database connection error:', err);
-  process.exit(1);
 });
 
 export { pool };

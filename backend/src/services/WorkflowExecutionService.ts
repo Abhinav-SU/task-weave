@@ -56,6 +56,7 @@ export interface WorkflowExecution {
 }
 
 export class WorkflowExecutionService {
+  private readonly cancelledExecutions = new Set<string>();
   private readonly nodeTypeAliases: Record<string, WorkflowNode['type']> = {
     'ai-platform': 'aiNode',
     condition: 'conditionNode',
@@ -206,6 +207,11 @@ export class WorkflowExecutionService {
       const maxNodes = 50; // Safety limit to prevent infinite loops
 
       while (currentNode && nodeCount < maxNodes) {
+        if (this.cancelledExecutions.has(execution.id)) {
+          await this.markExecutionCancelled(execution.id);
+          return;
+        }
+
         console.log(`Executing node: ${currentNode.id} (${currentNode.type})`);
 
         // Update current node
@@ -731,6 +737,18 @@ export class WorkflowExecutionService {
     }
   }
 
+  private async markExecutionCancelled(executionId: string): Promise<void> {
+    this.cancelledExecutions.delete(executionId);
+    await db
+      .update(workflowExecutions)
+      .set({
+        status: 'cancelled',
+        completed_at: new Date(),
+        updated_at: new Date(),
+      })
+      .where(eq(workflowExecutions.id, executionId));
+  }
+
   /**
    * Execute MCP node (calls MCP tools like filesystem, web search, etc)
    */
@@ -802,6 +820,7 @@ export class WorkflowExecutionService {
    * Cancel execution
    */
   async cancelExecution(executionId: string, userId: string): Promise<void> {
+    this.cancelledExecutions.add(executionId);
     await db
       .update(workflowExecutions)
       .set({

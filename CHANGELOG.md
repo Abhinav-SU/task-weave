@@ -22,3 +22,11 @@ All notable changes to this project are documented in this file.
 - Upgraded extension dependencies: `socket.io-client`, `esbuild`, and `typescript`.
 - Updated Drizzle CLI scripts to modern command syntax (`drizzle-kit generate` / `push`).
 - Added npm lockfiles to root, backend, frontend, and extension for reproducible installs.
+
+### Architecture improvements
+
+- Added centralized environment validation in `backend/src/config/env.ts` to fail fast on invalid configuration.
+- Refactored backend bootstrap and DB initialization to consume shared validated config instead of ad-hoc `process.env` reads.
+- Limited pretty logging transport to non-production environments for cleaner production logging and lower overhead.
+- Improved DB pool error handling to avoid forced process exits from event callbacks.
+- Added in-process execution cancellation tracking so cancelled workflow runs stop node execution promptly.

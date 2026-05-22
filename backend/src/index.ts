@@ -1,8 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
-import { config } from 'dotenv';
-import { db } from './db';
 import authRoutes from './routes/auth';
 import taskRoutes from './routes/tasks';
 import conversationRoutes from './routes/conversations';
@@ -11,28 +9,26 @@ import executionRoutes from './routes/executions';
 import { agentRoutes } from './routes/agents';
 import { mcpRoutes } from './routes/mcp';
 import { setupWebSocket } from './websocket';
+import { env, isProduction } from './config/env';
 
-// Load environment variables
-config();
-
-const PORT = parseInt(process.env.PORT || '3000');
-const HOST = process.env.HOST || 'localhost';
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required');
-}
+const PORT = env.PORT;
+const HOST = env.HOST;
+const JWT_SECRET = env.JWT_SECRET;
 
 // Create Fastify instance
 const app = Fastify({
   logger: {
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname',
-      },
-    },
+    ...(isProduction
+      ? {}
+      : {
+          transport: {
+            target: 'pino-pretty',
+            options: {
+              translateTime: 'HH:MM:ss Z',
+              ignore: 'pid,hostname',
+            },
+          },
+        }),
   },
 });
 
@@ -40,7 +36,7 @@ const app = Fastify({
 async function registerPlugins() {
   // CORS
   await app.register(cors, {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
+    origin: env.CORS_ORIGIN,
     credentials: true,
   });
 
@@ -83,7 +79,7 @@ async function start() {
     await registerRoutes();
 
     // Setup WebSocket server
-    const io = setupWebSocket(app);
+    setupWebSocket(app);
 
     await app.listen({ port: PORT, host: HOST });
     
@@ -103,7 +99,7 @@ async function start() {
    🤖 Agents:     /api/agents
    🔌 MCP:        /api/mcp
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Environment: ${process.env.NODE_ENV || 'development'}
+Environment: ${env.NODE_ENV}
     `);
   } catch (err) {
     console.error('❌ Fatal error starting server:');
