@@ -30,3 +30,11 @@ All notable changes to this project are documented in this file.
 - Limited pretty logging transport to non-production environments for cleaner production logging and lower overhead.
 - Improved DB pool error handling to avoid forced process exits from event callbacks.
 - Added in-process execution cancellation tracking so cancelled workflow runs stop node execution promptly.
+
+### Missing functionality
+
+- Added `GET /health/ready` with a live Postgres check for readiness probes.
+- Added global request error normalization for validation and internal errors.
+- Added API rate limiting and security headers middleware (`@fastify/rate-limit`, `@fastify/helmet`).
+- Implemented `GET /api/tasks/search` to match frontend API usage.
+- Added exponential backoff retry handling for OpenAI/Gemini/Claude workflow node execution calls.

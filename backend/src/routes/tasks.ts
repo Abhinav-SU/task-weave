@@ -26,6 +26,11 @@ const updateTaskSchema = z.object({
   metadata: z.record(z.any()).optional(),
 });
 
+const searchTaskSchema = z.object({
+  q: z.string().min(1).max(200),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+});
+
 const taskRoutes: FastifyPluginAsync = async (fastify) => {
   // Create task
   fastify.post('/', {
@@ -111,6 +116,34 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
         },
       });
     } catch (error) {
+      fastify.log.error(error);
+      return reply.code(500).send({ error: 'Internal server error' });
+    }
+  });
+
+  // Get task by ID
+  fastify.get('/search', {
+    onRequest: [fastify.authenticate],
+  }, async (request, reply) => {
+    try {
+      const { userId } = request.user as { userId: string };
+      const { q, limit } = searchTaskSchema.parse(request.query);
+
+      const results = await db.query.tasks.findMany({
+        where: and(
+          eq(tasks.user_id, userId),
+          eq(tasks.is_template, 'no'),
+          sql`(${tasks.title} ILIKE ${`%${q}%`} OR ${tasks.description} ILIKE ${`%${q}%`})`
+        ),
+        limit,
+        orderBy: desc(tasks.updated_at),
+      });
+
+      return reply.send({ tasks: results, query: q });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return reply.code(400).send({ error: error.errors });
+      }
       fastify.log.error(error);
       return reply.code(500).send({ error: 'Internal server error' });
     }

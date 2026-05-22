@@ -1,6 +1,9 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
+import helmet from '@fastify/helmet';
+import rateLimit from '@fastify/rate-limit';
+import { ZodError } from 'zod';
 import authRoutes from './routes/auth';
 import taskRoutes from './routes/tasks';
 import conversationRoutes from './routes/conversations';
@@ -10,6 +13,7 @@ import { agentRoutes } from './routes/agents';
 import { mcpRoutes } from './routes/mcp';
 import { setupWebSocket } from './websocket';
 import { env, isProduction } from './config/env';
+import { pool } from './db';
 
 const PORT = env.PORT;
 const HOST = env.HOST;
@@ -45,6 +49,15 @@ async function registerPlugins() {
     secret: JWT_SECRET,
   });
 
+  await app.register(helmet, {
+    contentSecurityPolicy: false,
+  });
+
+  await app.register(rateLimit, {
+    max: 120,
+    timeWindow: '1 minute',
+  });
+
   // JWT verification decorator
   app.decorate('authenticate', async function (request, reply) {
     try {
@@ -62,6 +75,20 @@ async function registerRoutes() {
     return { status: 'ok', timestamp: new Date().toISOString() };
   });
 
+  app.get('/health/ready', async (_request, reply) => {
+    try {
+      await pool.query('SELECT 1');
+      return { status: 'ready', checks: { database: 'ok' }, timestamp: new Date().toISOString() };
+    } catch (error) {
+      app.log.error({ error }, 'Readiness check failed');
+      return reply.code(503).send({
+        status: 'not_ready',
+        checks: { database: 'failed' },
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
   // API routes
   await app.register(authRoutes, { prefix: '/api/auth' });
   await app.register(taskRoutes, { prefix: '/api/tasks' });
@@ -76,6 +103,16 @@ async function registerRoutes() {
 async function start() {
   try {
     await registerPlugins();
+
+    app.setErrorHandler((error, _request, reply) => {
+      if (error instanceof ZodError) {
+        return reply.code(400).send({ error: 'Validation error', details: error.issues });
+      }
+
+      app.log.error({ error }, 'Unhandled request error');
+      return reply.code(500).send({ error: 'Internal server error' });
+    });
+
     await registerRoutes();
 
     // Setup WebSocket server

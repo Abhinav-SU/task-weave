@@ -57,6 +57,7 @@ export interface WorkflowExecution {
 
 export class WorkflowExecutionService {
   private readonly cancelledExecutions = new Set<string>();
+  private readonly maxProviderRetries = 3;
   private readonly nodeTypeAliases: Record<string, WorkflowNode['type']> = {
     'ai-platform': 'aiNode',
     condition: 'conditionNode',
@@ -438,13 +439,13 @@ export class WorkflowExecutionService {
     try {
       switch (platform.toLowerCase()) {
         case 'chatgpt':
-          return await this.callOpenAI(prompt, model);
+          return await this.withRetries(() => this.callOpenAI(prompt, model), 'openai');
         
         case 'gemini':
-          return await this.callGemini(prompt, model);
+          return await this.withRetries(() => this.callGemini(prompt, model), 'gemini');
         
         case 'claude':
-          return await this.callClaude(prompt, model);
+          return await this.withRetries(() => this.callClaude(prompt, model), 'claude');
         
         case 'perplexity':
           // Perplexity not implemented yet - return simulated response
@@ -458,6 +459,32 @@ export class WorkflowExecutionService {
       console.error(`❌ Error calling ${platform} API:`, error.message);
       throw new Error(`Failed to call ${platform} API: ${error.message}`);
     }
+  }
+
+  private async withRetries(
+    fn: () => Promise<string>,
+    provider: string
+  ): Promise<string> {
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= this.maxProviderRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error: any) {
+        lastError = error;
+        if (attempt >= this.maxProviderRetries) {
+          break;
+        }
+
+        const delayMs = 300 * Math.pow(2, attempt - 1);
+        console.warn(
+          `Retrying ${provider} call after failure (${attempt}/${this.maxProviderRetries - 1} retries): ${error.message}`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+
+    throw new Error(`Failed after retries (${provider}): ${lastError?.message || 'Unknown error'}`);
   }
 
   /**
