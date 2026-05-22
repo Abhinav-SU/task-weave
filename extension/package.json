@@ -19,14 +19,13 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "socket.io-client": "^4.6.0",
+    "socket.io-client": "^4.8.3",
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.256",
     "@types/webextension-polyfill": "^0.10.7",
-    "esbuild": "^0.19.9",
-    "typescript": "^5.3.3"
+    "esbuild": "^0.28.0",
+    "typescript": "^6.0.3"
   }
 }
-
