@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 // Templates are stored as special tasks with metadata
 // We'll use the existing tasks table but with a special marker
+const TEMPLATE_FLAG = 'yes';
 
 const templateSchema = z.object({
   name: z.string().min(1).max(200),
@@ -34,7 +35,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
         .where(
           and(
             eq(tasks.user_id, userId),
-            eq(tasks.is_template, 'yes') // Use is_template field
+            eq(tasks.is_template, TEMPLATE_FLAG)
           )
         )
         .orderBy(desc(tasks.updated_at));
@@ -77,7 +78,8 @@ export default async function templateRoutes(fastify: FastifyInstance) {
         .where(
           and(
             eq(tasks.id, id),
-            eq(tasks.user_id, userId)
+            eq(tasks.user_id, userId),
+            eq(tasks.is_template, TEMPLATE_FLAG)
           )
         );
 
@@ -124,7 +126,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
           status: 'archived', // Templates are not active tasks
           platform: 'workflow', // Mark as workflow template
           tags: data.tags,
-          is_template: 'true', // Mark this as a template
+          is_template: TEMPLATE_FLAG,
           metadata: {
             category: data.category,
             icon: data.icon,
@@ -179,7 +181,7 @@ export default async function templateRoutes(fastify: FastifyInstance) {
       const [existing] = await db
         .select()
         .from(tasks)
-        .where(and(eq(tasks.id, id), eq(tasks.user_id, userId)));
+        .where(and(eq(tasks.id, id), eq(tasks.user_id, userId), eq(tasks.is_template, TEMPLATE_FLAG)));
 
       if (!existing) {
         return reply.status(404).send({ error: 'Template not found' });

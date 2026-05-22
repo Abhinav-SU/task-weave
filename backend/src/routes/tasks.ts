@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
 import { db } from '../db';
-import { tasks } from '../db/schema-simple';
+import { tasks, conversations, messages } from '../db/schema-simple';
 import { eq, and, desc, sql } from 'drizzle-orm';
 
 // Validation schemas
@@ -13,6 +13,7 @@ const createTaskSchema = z.object({
   platform: z.string().optional(),
   tags: z.array(z.string()).optional(),
   metadata: z.record(z.any()).optional(),
+  isTemplate: z.boolean().optional().default(false),
 });
 
 const updateTaskSchema = z.object({
@@ -48,7 +49,7 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
           platform: body.platform,
           tags: body.tags,
           metadata: body.metadata,
-          is_template: 'no', // Always create as regular task, not template
+          is_template: body.isTemplate ? 'yes' : 'no',
         })
         .returning();
 
@@ -235,15 +236,22 @@ const taskRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       // Get statistics (you can enhance this with more complex queries)
-      const conversationCount = await db.query.conversations.findMany({
-        where: eq(tasks.id, id),
-      });
+      const [{ conversationCount }] = await db
+        .select({ conversationCount: sql<number>`count(*)::int` })
+        .from(conversations)
+        .where(eq(conversations.task_id, id));
+
+      const [{ totalMessages }] = await db
+        .select({ totalMessages: sql<number>`count(*)::int` })
+        .from(messages)
+        .innerJoin(conversations, eq(messages.conversation_id, conversations.id))
+        .where(eq(conversations.task_id, id));
 
       return reply.send({
         task_id: id,
-        conversation_count: conversationCount.length,
-        total_messages: conversationCount.reduce((sum, conv) => sum + (conv.message_count || 0), 0),
-        total_tokens: conversationCount.reduce((sum, conv) => sum + (conv.token_count || 0), 0),
+        conversation_count: conversationCount ?? 0,
+        total_messages: totalMessages ?? 0,
+        total_tokens: 0,
       });
     } catch (error) {
       fastify.log.error(error);

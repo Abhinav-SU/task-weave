@@ -56,6 +56,29 @@ export interface WorkflowExecution {
 }
 
 export class WorkflowExecutionService {
+  private readonly nodeTypeAliases: Record<string, WorkflowNode['type']> = {
+    'ai-platform': 'aiNode',
+    condition: 'conditionNode',
+    transform: 'transformNode',
+    'mcp-web-search': 'mcpNode',
+    'mcp-file': 'mcpNode',
+    'mcp-database': 'mcpNode',
+    'mcp-code-exec': 'mcpNode',
+  };
+
+  private normalizeTemplate(template: WorkflowTemplate): WorkflowTemplate {
+    return {
+      ...template,
+      nodes: template.nodes.map((node) => {
+        const aliasedType = this.nodeTypeAliases[node.type] || node.type;
+        return {
+          ...node,
+          type: aliasedType,
+        };
+      }),
+    };
+  }
+
   /**
    * Execute a workflow template
    * @param templateId - UUID of database template (optional if templateData provided)
@@ -77,19 +100,19 @@ export class WorkflowExecutionService {
     if (templateData) {
       // Use inline template data (for client-side templates)
       console.log(`📋 Using inline template data with ${templateData.nodes.length} nodes`);
-      template = {
+      template = this.normalizeTemplate({
         id: 'inline-template',
         name: templateData.name || 'Inline Workflow',
         nodes: templateData.nodes,
         edges: templateData.edges,
-      };
+      });
     } else if (templateId) {
       // Load from database
       const dbTemplate = await this.loadTemplate(templateId, userId);
       if (!dbTemplate) {
         throw new Error('Template not found or access denied');
       }
-      template = dbTemplate;
+      template = this.normalizeTemplate(dbTemplate);
     } else {
       throw new Error('Either templateId or templateData must be provided');
     }

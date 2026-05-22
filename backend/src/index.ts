@@ -17,6 +17,11 @@ config();
 
 const PORT = parseInt(process.env.PORT || '3000');
 const HOST = process.env.HOST || 'localhost';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
 // Create Fastify instance
 const app = Fastify({
@@ -35,13 +40,13 @@ const app = Fastify({
 async function registerPlugins() {
   // CORS
   await app.register(cors, {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
     credentials: true,
   });
 
   // JWT
   await app.register(jwt, {
-    secret: process.env.JWT_SECRET || 'your-secret-key-change-this',
+    secret: JWT_SECRET,
   });
 
   // JWT verification decorator

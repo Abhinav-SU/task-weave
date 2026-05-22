@@ -19,10 +19,12 @@ CREATE TABLE IF NOT EXISTS tasks (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     description TEXT,
-    status TEXT DEFAULT 'pending' NOT NULL,
+    status TEXT DEFAULT 'active' NOT NULL,
     platform TEXT,
     tags JSONB,
     embedding TEXT,
+    metadata JSONB,
+    is_template TEXT,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP DEFAULT NOW() NOT NULL
 );

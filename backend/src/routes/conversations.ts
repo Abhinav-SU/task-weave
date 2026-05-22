@@ -8,25 +8,14 @@ import { eq, and, desc } from 'drizzle-orm';
 const createConversationSchema = z.object({
   task_id: z.string().uuid(),
   platform: z.string(),
-  platform_conversation_id: z.string().optional(),
   title: z.string().optional(),
-  parent_conversation_id: z.string().uuid().optional(),
+  parent_id: z.string().uuid().optional(),
 });
 
 const addMessageSchema = z.object({
-  role: z.enum(['user', 'assistant', 'system']),
+  sender: z.enum(['user', 'assistant', 'system']),
   content: z.string(),
-  token_count: z.number().optional(),
-  sequence_number: z.number(),
-  metadata: z.object({
-    code_blocks: z.array(z.object({
-      language: z.string(),
-      content: z.string(),
-    })).optional(),
-    images: z.array(z.string()).optional(),
-    artifacts: z.array(z.any()).optional(),
-    model: z.string().optional(),
-  }).optional(),
+  content_type: z.enum(['text', 'code', 'image']).optional().default('text'),
 });
 
 const conversationRoutes: FastifyPluginAsync = async (fastify) => {
@@ -74,7 +63,7 @@ const conversationRoutes: FastifyPluginAsync = async (fastify) => {
         where: eq(conversations.id, id),
         with: {
           messages: {
-            orderBy: (messages, { asc }) => [asc(messages.sequence_number)],
+            orderBy: (messages, { asc }) => [asc(messages.created_at)],
           },
           task: {
             where: eq(tasks.user_id, userId),
@@ -124,12 +113,10 @@ const conversationRoutes: FastifyPluginAsync = async (fastify) => {
         })
         .returning();
 
-      // Update conversation stats
+      // Touch conversation activity timestamp
       await db
         .update(conversations)
         .set({
-          message_count: (conversation.message_count || 0) + 1,
-          token_count: (conversation.token_count || 0) + (body.token_count || 0),
           updated_at: new Date(),
         })
         .where(eq(conversations.id, id));
@@ -171,7 +158,7 @@ const conversationRoutes: FastifyPluginAsync = async (fastify) => {
         where: eq(conversations.task_id, rootConversation.task_id),
         with: {
           messages: {
-            orderBy: (messages, { asc }) => [asc(messages.sequence_number)],
+            orderBy: (messages, { asc }) => [asc(messages.created_at)],
           },
         },
       });
@@ -179,7 +166,7 @@ const conversationRoutes: FastifyPluginAsync = async (fastify) => {
       // Build tree structure
       const buildTree = (parentId: string | null) => {
         return allConversations
-          .filter(conv => conv.parent_conversation_id === parentId)
+          .filter(conv => conv.parent_id === parentId)
           .map(conv => ({
             ...conv,
             children: buildTree(conv.id),

@@ -13,8 +13,12 @@ const runAgentSchema = z.object({
 });
 
 export async function agentRoutes(fastify: FastifyInstance) {
+  const authOptions = {
+    onRequest: [fastify.authenticate],
+  };
+
   // Run an agent
-  fastify.post('/run', async (request, reply) => {
+  fastify.post('/run', authOptions, async (request, reply) => {
     try {
       const body = runAgentSchema.parse(request.body);
 
@@ -59,7 +63,7 @@ export async function agentRoutes(fastify: FastifyInstance) {
   });
 
   // Get available tools
-  fastify.get('/tools', async (request, reply) => {
+  fastify.get('/tools', authOptions, async (request, reply) => {
     try {
       const tools = agentService.getAvailableTools();
       return { tools };
@@ -71,7 +75,7 @@ export async function agentRoutes(fastify: FastifyInstance) {
   });
 
   // Get agent presets (pre-configured agents)
-  fastify.get('/presets', async (request, reply) => {
+  fastify.get('/presets', authOptions, async (request, reply) => {
     const presets = [
       {
         id: 'research-agent',

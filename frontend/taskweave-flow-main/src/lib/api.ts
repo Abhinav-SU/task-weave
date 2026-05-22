@@ -202,75 +202,27 @@ class ApiClient {
 
   // Templates (fetch tasks marked as templates)
   async getTemplates() {
-    try {
-      const response = await this.getTasks();
-      
-      // Handle both array and object responses
-      const tasks = Array.isArray(response) ? response : (response.tasks || []);
-      
-      // Filter tasks that are templates (check is_template field OR metadata.isTemplate)
-      const templates = tasks
-        .filter((task: any) => task.is_template === 'yes' || task.metadata?.isTemplate === true)
-        .map((task: any) => ({
-          id: task.id,
-          name: task.title,
-          description: task.description || '',
-          category: task.metadata?.category || 'General',
-          tags: Array.isArray(task.tags) ? task.tags : (task.metadata?.tags || []),
-          icon: task.metadata?.icon || '📋',
-          isPublic: false,
-          estimatedTime: task.metadata?.estimatedTime || 5,
-          createdAt: new Date(task.created_at),
-          updatedAt: new Date(task.updated_at),
-          nodes: task.metadata?.nodes || [],
-          edges: task.metadata?.edges || [],
-          metadata: task.metadata, // Keep full metadata for RunTemplateDialog
-        }));
-      
-      return { templates };
-    } catch (error) {
-      console.error('Failed to fetch templates:', error);
-      return { templates: [] };
-    }
+    return this.request('/api/templates');
   }
 
   async createTemplate(template: any) {
-    const task = {
-      title: template.name,
-      description: template.description,
-      status: 'active',
-      metadata: {
-        isTemplate: true,
-        category: template.category,
-        tags: template.tags,
-        icon: template.icon,
-        estimatedTime: template.estimatedTime,
-        nodes: template.nodes,
-        edges: template.edges,
-      },
-    };
-    return this.createTask(task);
+    return this.request('/api/templates', {
+      method: 'POST',
+      body: JSON.stringify(template),
+    });
   }
 
   async updateTemplate(id: string, template: any) {
-    const task = {
-      title: template.name,
-      description: template.description,
-      metadata: {
-        isTemplate: true,
-        category: template.category,
-        tags: template.tags,
-        icon: template.icon,
-        estimatedTime: template.estimatedTime,
-        nodes: template.nodes,
-        edges: template.edges,
-      },
-    };
-    return this.updateTask(id, task);
+    return this.request(`/api/templates/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(template),
+    });
   }
 
   async deleteTemplate(id: string) {
-    return this.deleteTask(id);
+    return this.request(`/api/templates/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   // Health check

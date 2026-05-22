@@ -89,8 +89,12 @@ const connectedServers: Map<string, {
 }> = new Map();
 
 export async function mcpRoutes(fastify: FastifyInstance) {
+  const authOptions = {
+    onRequest: [fastify.authenticate],
+  };
+
   // List available MCP servers
-  fastify.get('/servers', async (request, reply) => {
+  fastify.get('/servers', authOptions, async (request, reply) => {
     const servers = AVAILABLE_SERVERS.map(server => ({
       ...server,
       connected: connectedServers.has(server.id),
@@ -101,7 +105,7 @@ export async function mcpRoutes(fastify: FastifyInstance) {
   });
 
   // Connect to an MCP server
-  fastify.post('/connect', async (request, reply) => {
+  fastify.post('/connect', authOptions, async (request, reply) => {
     try {
       const { serverId } = request.body as { serverId: string };
 
@@ -158,7 +162,7 @@ export async function mcpRoutes(fastify: FastifyInstance) {
   });
 
   // Disconnect from current MCP server
-  fastify.post('/disconnect', async (request, reply) => {
+  fastify.post('/disconnect', authOptions, async (request, reply) => {
     try {
       await mcpService.disconnect();
       connectedServers.clear();
@@ -175,7 +179,7 @@ export async function mcpRoutes(fastify: FastifyInstance) {
   });
 
   // List tools from connected server
-  fastify.get('/tools', async (request, reply) => {
+  fastify.get('/tools', authOptions, async (request, reply) => {
     try {
       const tools = await mcpService.listTools();
       return { tools };
@@ -191,7 +195,7 @@ export async function mcpRoutes(fastify: FastifyInstance) {
   });
 
   // Execute an MCP tool
-  fastify.post('/execute', async (request, reply) => {
+  fastify.post('/execute', authOptions, async (request, reply) => {
     try {
       const body = executeToolSchema.parse(request.body);
 
@@ -219,7 +223,7 @@ export async function mcpRoutes(fastify: FastifyInstance) {
   });
 
   // Read a resource
-  fastify.post('/resource', async (request, reply) => {
+  fastify.post('/resource', authOptions, async (request, reply) => {
     try {
       const { uri } = request.body as { uri: string };
 
@@ -242,7 +246,7 @@ export async function mcpRoutes(fastify: FastifyInstance) {
   });
 
   // Get status of MCP connections
-  fastify.get('/status', async (request, reply) => {
+  fastify.get('/status', authOptions, async (request, reply) => {
     const connections = Array.from(connectedServers.values());
     
     return {
